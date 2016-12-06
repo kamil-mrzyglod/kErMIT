@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Sigil;
 
 namespace kErMIT
@@ -24,7 +22,6 @@ namespace kErMIT
         /// </summary>
         /// <param name="type">Type to be constructed</param>
         /// <param name="parameters">Constructor's parameters types</param>
-        /// <param name="values">Values to be passed as parameters</param>
         /// <returns>An instance of a given type</returns>
         public static Func<object[], object> CreateInstance(this Type type, Type[] parameters)
         {
@@ -36,10 +33,12 @@ namespace kErMIT
                 for (var i = 0; i < parameters.Length; i++)
                 {
                     var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}");
-                    emiter.LoadArgument((ushort)i);
+                    emiter.LoadArgument(0);
                     emiter.LoadConstant(i);
                     emiter.LoadElement(typeof(object));
-                    emiter.CastClass(parameters[i]);
+
+                    AlignParameterType(parameters[i], emiter);
+                    
                     emiter.StoreLocal(param);
                     emiter.LoadLocal(param);
                 }
@@ -52,6 +51,18 @@ namespace kErMIT
                 var del = emiter.CreateDelegate();
 
                 return del;
+            }
+        }
+
+        private static void AlignParameterType(Type parameterType, Emit<Func<object[], object>> emiter)
+        {
+            if (parameterType.IsPrimitive)
+            {
+                emiter.UnboxAny(parameterType);
+            }
+            else
+            {
+                emiter.CastClass(parameterType);
             }
         }
     }
