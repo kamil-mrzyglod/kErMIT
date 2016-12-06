@@ -16,10 +16,10 @@ namespace kErMIT.Test
         [Test]
         public void ReflectionTest_WhenPassingParametersToCreateInstance_ShouldCreateParameterlessCtor()
         {
-            var foo = typeof(Foo).CreateInstance(typeof(string));
+            var foo = typeof(Foo).CreateInstance(new [] { typeof(string) }, new[] {"Foo"});
 
             Assert.That(foo, Is.InstanceOf<Foo>());
-            Assert.That(((Foo)foo)._bar, Is.EqualTo(null));
+            Assert.That(((Foo)foo)._bar, Is.EqualTo("Foo"));
         }
     }
 
