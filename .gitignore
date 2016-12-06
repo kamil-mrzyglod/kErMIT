@@ -7,3 +7,5 @@ kErMIT.Test/obj/
 kErMIT.Test/bin/
 kErMIT.sln.DotSettings.user
 .vs/kErMIT/v14/.suo
+kErMIT.Bench/bin/
+kErMIT.Bench/obj/

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kErMIT", "kErMIT\kErMIT.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kErMIT.Test", "kErMIT.Test\kErMIT.Test.csproj", "{E389DC6E-C8A4-48A4-9418-3BA3D8E695E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kErMIT.Bench", "kErMIT.Bench\kErMIT.Bench.csproj", "{FBDBEBE1-0204-4AB9-89C5-C43EBC5D1C9C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E389DC6E-C8A4-48A4-9418-3BA3D8E695E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E389DC6E-C8A4-48A4-9418-3BA3D8E695E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E389DC6E-C8A4-48A4-9418-3BA3D8E695E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBDBEBE1-0204-4AB9-89C5-C43EBC5D1C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBDBEBE1-0204-4AB9-89C5-C43EBC5D1C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBDBEBE1-0204-4AB9-89C5-C43EBC5D1C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBDBEBE1-0204-4AB9-89C5-C43EBC5D1C9C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
