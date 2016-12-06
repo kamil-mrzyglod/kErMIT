@@ -1,0 +1,9 @@
+packages/
+kErMIT/bin/Debug/kErMIT.dll
+kErMIT/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+kErMIT/bin/
+kErMIT/obj/
+kErMIT.Test/obj/
+kErMIT.Test/bin/
+kErMIT.sln.DotSettings.user
+.vs/kErMIT/v14/.suo
