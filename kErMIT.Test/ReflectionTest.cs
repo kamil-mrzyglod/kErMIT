@@ -7,7 +7,7 @@ namespace kErMIT.Test
         [Test]
         public void ReflectionTest_WhenPassingNoParameterToCreateInstance_ShouldCreateParameterlessCtor()
         {
-            var foo = typeof(Foo).CreateInstance();
+            var foo = typeof(Foo).CreateInstance()(null);
 
             Assert.That(foo, Is.InstanceOf<Foo>());
             Assert.That(((Foo)foo)._bar, Is.EqualTo("Parameterless"));
@@ -16,7 +16,7 @@ namespace kErMIT.Test
         [Test]
         public void ReflectionTest_WhenPassingParametersToCreateInstance_ShouldCreateParameterlessCtor()
         {
-            var foo = typeof(Foo).CreateInstance(new [] { typeof(string) }, new[] {"Foo"});
+            var foo = typeof(Foo).CreateInstance(new [] { typeof(string) })(new[] {"Foo"});
 
             Assert.That(foo, Is.InstanceOf<Foo>());
             Assert.That(((Foo)foo)._bar, Is.EqualTo("Foo"));

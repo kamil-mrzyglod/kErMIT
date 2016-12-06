@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Sigil;
 
 namespace kErMIT
@@ -11,9 +13,9 @@ namespace kErMIT
         /// </summary>
         /// <param name="type">Type to be constructed</param>
         /// <returns>An instance of a given type</returns>
-        public static object CreateInstance(this Type type)
+        public static Func<object[], object> CreateInstance(this Type type)
         {
-            return CreateInstance(type, new Type[0], new object[0]);
+            return CreateInstance(type, new Type[0]);
         }
 
         /// <summary>
@@ -24,9 +26,10 @@ namespace kErMIT
         /// <param name="parameters">Constructor's parameters types</param>
         /// <param name="values">Values to be passed as parameters</param>
         /// <returns>An instance of a given type</returns>
-        public static object CreateInstance(this Type type, Type[] parameters, object[] values)
+        public static Func<object[], object> CreateInstance(this Type type, Type[] parameters)
         {
-            var emiter = Emit<Func<object[], object>>.NewDynamicMethod(type.Name.ToMethodName("CreateInstance"));
+            var methodName = type.Name.ToMethodName("CreateInstance");           
+            var emiter = Emit<Func<object[], object>>.NewDynamicMethod(methodName);
 
             using (var local = emiter.DeclareLocal<object>("__instance"))
             {
@@ -47,7 +50,8 @@ namespace kErMIT
                 emiter.Return();
 
                 var del = emiter.CreateDelegate();
-                return del(values);
+
+                return del;
             }
         }
     }
