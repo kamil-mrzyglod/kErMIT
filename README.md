@@ -18,7 +18,7 @@ Currently kErMIT covers following scenario:
 
 ## Performance
 
-You can run simple benchmarks from `kErMIT.Bench` project. Current results(Intel(R) Code(TM) i7-6820HQ @ 2.70GHz, 16 GB SODIMM 2133MHz, Windows 10 Enterprise, Release build, 1M iterations per each test case, warm up of 10K iterations):
+You can run simple benchmarks from `kErMIT.Bench` project. Current results(Intel(R) Core(TM) i7-6820HQ @ 2.70GHz, 16 GB SODIMM 2133MHz, Windows 10 Enterprise, Release build, 1M iterations per each test case, warm up of 10K iterations):
 
 ```
 # Warming up...
