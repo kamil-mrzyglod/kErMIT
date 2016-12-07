@@ -7,8 +7,10 @@ namespace kErMIT.Bench
     {
         private static void Main()
         {
+            Console.WriteLine("# Warming up...");
+
             var sw = new Stopwatch();
-            for (var i = 0; i <= 1000; i++)
+            for (var i = 0; i <= 100000; i++)
             {
                 var int1 = Activator.CreateInstance<DummyClass>();
                 var int2 = typeof(DummyClass).CreateInstance()(null);
