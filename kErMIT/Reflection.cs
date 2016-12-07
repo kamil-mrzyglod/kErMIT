@@ -56,7 +56,7 @@ namespace kErMIT
             }
         }
 
-        private static void AlignParameterType(Type parameterType, Emit<Func<object[], object>> emiter)
+        private static void AlignParameterType<T>(Type parameterType, Emit<T> emiter)
         {
             if (parameterType.IsPrimitive)
             {
@@ -107,14 +107,7 @@ namespace kErMIT
                         emiter.LoadConstant(i);
                         emiter.LoadElement(typeof(object));
 
-                        if (parameters[i].IsPrimitive)
-                        {
-                            emiter.UnboxAny(parameters[i]);
-                        }
-                        else
-                        {
-                            emiter.CastClass(parameters[i]);
-                        }
+                        AlignParameterType(parameters[i], emiter);
 
                         emiter.StoreLocal(param);
                         emiter.LoadLocal(param);
