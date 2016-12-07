@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections.Generic;
 using Sigil;
 
 namespace kErMIT
@@ -31,20 +31,7 @@ namespace kErMIT
 
             using (var local = emiter.DeclareLocal<object>("__instance"))
             {
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    using (var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}"))
-                    {
-                        emiter.LoadArgument(0);
-                        emiter.LoadConstant(i);
-                        emiter.LoadElement(typeof(object));
-
-                        AlignParameterType(parameters[i], emiter);
-
-                        emiter.StoreLocal(param);
-                        emiter.LoadLocal(param);
-                    }                    
-                }
+                LoadParametersAsLocals(parameters, emiter);
 
                 emiter.NewObject(type, parameters);
                 emiter.StoreLocal(local);
@@ -53,18 +40,6 @@ namespace kErMIT
 
                 var del = emiter.CreateDelegate();
                 return del;
-            }
-        }
-
-        private static void AlignParameterType<T>(Type parameterType, Emit<T> emiter)
-        {
-            if (parameterType.IsPrimitive)
-            {
-                emiter.UnboxAny(parameterType);
-            }
-            else
-            {
-                emiter.CastClass(parameterType);
             }
         }
 
@@ -99,21 +74,8 @@ namespace kErMIT
             }
             else
             {
-                for (var i = 0; i < parameters.Length; i++)
-                {
-                    using (var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}"))
-                    {
-                        emiter.LoadArgument(0);
-                        emiter.LoadConstant(i);
-                        emiter.LoadElement(typeof(object));
+                LoadParametersAsLocals(parameters, emiter);
 
-                        AlignParameterType(parameters[i], emiter);
-
-                        emiter.StoreLocal(param);
-                        emiter.LoadLocal(param);
-                    }
-                }
-              
                 emiter.Call(type.GetMethod(name, parameters));
             }
             
@@ -121,6 +83,36 @@ namespace kErMIT
 
             var del = emiter.CreateDelegate();
             return del;
+        }
+
+        private static void LoadParametersAsLocals<T>(IReadOnlyList<Type> parameters, Emit<T> emiter)
+        {
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                using (var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}"))
+                {
+                    emiter.LoadArgument(0);
+                    emiter.LoadConstant(i);
+                    emiter.LoadElement(typeof(object));
+
+                    AlignParameterType(parameters[i], emiter);
+
+                    emiter.StoreLocal(param);
+                    emiter.LoadLocal(param);
+                }
+            }
+        }
+
+        private static void AlignParameterType<T>(Type parameterType, Emit<T> emiter)
+        {
+            if (parameterType.IsPrimitive)
+            {
+                emiter.UnboxAny(parameterType);
+            }
+            else
+            {
+                emiter.CastClass(parameterType);
+            }
         }
     }
 }
