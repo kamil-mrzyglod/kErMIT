@@ -14,6 +14,7 @@ Currently kErMIT covers following scenario:
 * `new T()` -> `typeof(T).GenerateConstructor()(null);`
 * `new T("param1", "param2")` -> `typeof(T).GenerateConstructor()(new []{"param1", "param2"});`
 * `T.CallMeStatic()` -> `typeof(T).GenerateMethodCall("CallMeStatic")()`
+* `T.CallMeStatic("param1")` -> `typeof(T).GenerateMethodCall("CallMeStatic", new[]{typeof(string)})("param1")`
 
 ## Performance
 
@@ -22,15 +23,19 @@ You can run simple benchmarks from `kErMIT.Bench` project. Current results(Intel
 ```
 # Warming up...
 # Creating instances(default) using reflection.
-# Elapsed time: 72ms
+# Elapsed time: 77ms
 # Creating instances(default) using kErMIT.
-# Elapsed time: 9ms
+# Elapsed time: 10ms
 # Creating instances(1 param) using reflection.
-# Elapsed time: 934ms
+# Elapsed time: 917ms
 # Creating instances(1 param) using kErMIT.
-# Elapsed time: 16ms
+# Elapsed time: 18ms
 # Calling a static method(no params, void) using reflection.
-# Elapsed time: 152ms
+# Elapsed time: 157ms
 # Creating a static method(no params, void) using kErMIT.
 # Elapsed time: 6ms
+# Calling a static method(1 param, void) using reflection.
+# Elapsed time: 231ms
+# Creating a static method(1 param, void) using kErMIT.
+# Elapsed time: 14ms
 ```
