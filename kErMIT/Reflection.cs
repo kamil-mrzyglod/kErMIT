@@ -11,9 +11,9 @@ namespace kErMIT
         /// </summary>
         /// <param name="type">Type to be constructed</param>
         /// <returns>An instance of a given type</returns>
-        public static Func<object[], object> CreateInstance(this Type type)
+        public static Func<object[], object> GenerateConstructor(this Type type)
         {
-            return CreateInstance(type, new Type[0]);
+            return GenerateConstructor(type, new Type[0]);
         }
 
         /// <summary>
@@ -23,24 +23,26 @@ namespace kErMIT
         /// <param name="type">Type to be constructed</param>
         /// <param name="parameters">Constructor's parameters types</param>
         /// <returns>An instance of a given type</returns>
-        public static Func<object[], object> CreateInstance(this Type type, Type[] parameters)
+        public static Func<object[], object> GenerateConstructor(this Type type, Type[] parameters)
         {
-            var methodName = type.Name.ToMethodName("CreateInstance");           
+            var methodName = type.Name.ToMethodName("GenerateConstructor");           
             var emiter = Emit<Func<object[], object>>.NewDynamicMethod(methodName);
 
             using (var local = emiter.DeclareLocal<object>("__instance"))
             {
                 for (var i = 0; i < parameters.Length; i++)
                 {
-                    var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}");
-                    emiter.LoadArgument(0);
-                    emiter.LoadConstant(i);
-                    emiter.LoadElement(typeof(object));
+                    using (var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}"))
+                    {
+                        emiter.LoadArgument(0);
+                        emiter.LoadConstant(i);
+                        emiter.LoadElement(typeof(object));
 
-                    AlignParameterType(parameters[i], emiter);
-                    
-                    emiter.StoreLocal(param);
-                    emiter.LoadLocal(param);
+                        AlignParameterType(parameters[i], emiter);
+
+                        emiter.StoreLocal(param);
+                        emiter.LoadLocal(param);
+                    }                    
                 }
 
                 emiter.NewObject(type, parameters);
@@ -49,9 +51,20 @@ namespace kErMIT
                 emiter.Return();
 
                 var del = emiter.CreateDelegate();
-
                 return del;
             }
+        }
+
+        public static Action GenerateMethodCall(this Type type, string name)
+        {
+            var methodName = type.Name.ToMethodName("GenerateMethodCall");
+            var emiter = Emit<Action>.NewDynamicMethod(methodName);
+
+            emiter.Call(type.GetMethod(name));
+            emiter.Return();
+
+            var del = emiter.CreateDelegate();
+            return del;
         }
 
         private static void AlignParameterType(Type parameterType, Emit<Func<object[], object>> emiter)
