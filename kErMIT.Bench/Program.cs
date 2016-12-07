@@ -9,16 +9,19 @@ namespace kErMIT.Bench
         {
             Console.WriteLine("# Warming up...");
 
-            var methodInfo = typeof(DummyClass).GetMethod("CallMeStatic");
+            var methodInfo = typeof(DummyClass).GetMethod("CallMeStatic", new Type[0]);
+            var methodInfo2 = typeof(DummyClass).GetMethod("CallMeStatic", new []{typeof(string)});
             var instance = new DummyClass();
             var sw = new Stopwatch();
 
             for (var i = 0; i <= 100000; i++)
             {
-                var int1 = Activator.CreateInstance<DummyClass>();
-                var int2 = typeof(DummyClass).GenerateConstructor()(null);
-                var res1 = typeof(DummyClass).GenerateMethodCall("CallMeStatic");
-                var res2 = methodInfo.Invoke(instance, new object[0]);
+                var foo1 = Activator.CreateInstance<DummyClass>();
+                var foo2 = typeof(DummyClass).GenerateConstructor()(null);
+                var foo3 = typeof(DummyClass).GenerateMethodCall("CallMeStatic");
+                var foo4 = methodInfo.Invoke(instance, new object[0]);
+                var foo5 = typeof(DummyClass).GenerateMethodCall("CallMeStatic", new []{typeof(string)});
+                var foo6 = methodInfo2.Invoke(instance, new[] { "foo" });
             }
 
             Console.WriteLine("# Creating instances(default) using reflection.");
@@ -58,12 +61,13 @@ namespace kErMIT.Bench
             Console.WriteLine($"# Elapsed time: {sw.ElapsedMilliseconds}ms");
 
             Console.WriteLine("# Creating instances(1 param) using kErMIT.");
+            var del2 = typeof(DummyClass).GenerateConstructor(new []{typeof(string)});
 
             sw.Reset();
             sw.Start();
             for (var i = 0; i <= 1000000; i++)
             {
-                var int2 = del(new []{"foo"});
+                var int2 = del2(new []{"foo"});
             }
             sw.Stop();
 
@@ -89,7 +93,33 @@ namespace kErMIT.Bench
             sw.Start();
             for (var i = 0; i <= 1000000; i++)
             {
-                callDel();
+                callDel(null);
+            }
+            sw.Stop();
+
+            Console.WriteLine($"# Elapsed time: {sw.ElapsedMilliseconds}ms");
+
+            Console.WriteLine("# Calling a static method(1 param, void) using reflection.");
+
+            sw.Reset();
+            sw.Start();
+
+            for (var i = 0; i <= 1000000; i++)
+            {
+                methodInfo2.Invoke(instance, new[] { "foo" });
+            }
+            sw.Stop();
+
+            Console.WriteLine($"# Elapsed time: {sw.ElapsedMilliseconds}ms");
+
+            Console.WriteLine("# Creating a static method(1 param, void) using kErMIT.");
+            var callDel2 = typeof(DummyClass).GenerateMethodCall("CallMeStatic", new []{typeof(string)});
+
+            sw.Reset();
+            sw.Start();
+            for (var i = 0; i <= 1000000; i++)
+            {
+                callDel2(new []{"foo"});
             }
             sw.Stop();
 
@@ -117,6 +147,11 @@ namespace kErMIT.Bench
         public static void CallMeStatic()
         {
             StaticBar = "CallMeStatic";
+        }
+
+        public static void CallMeStatic(string text)
+        {
+            StaticBar = text;
         }
     }
 }

@@ -33,9 +33,19 @@ namespace kErMIT.Test
         {
             var method = typeof(Foo).GenerateMethodCall("CallMeStatic");
 
-            method();
+            method(null);
 
             Assert.That(Foo.StaticBar, Is.EqualTo("CallMeStatic"));
+        }
+
+        [Test]
+        public void ReflectionTest_WhenCallingAStaticMethodWithParametersAndVoidReturnType_ItIsCalledCorrectly()
+        {
+            var method = typeof(Foo).GenerateMethodCall("CallMeStatic", new []{typeof(string)});
+
+            method(new[] {"Foo"});
+
+            Assert.That(Foo.StaticBar, Is.EqualTo("Foo"));
         }
     }
 
@@ -49,6 +59,7 @@ namespace kErMIT.Test
         public Foo()
         {
             Bar = "Parameterless";
+            Foo.CallMeStatic();
         }
 
         public Foo(string bar)
@@ -65,6 +76,11 @@ namespace kErMIT.Test
         public static void CallMeStatic()
         {
             StaticBar = "CallMeStatic";
+        }
+
+        public static void CallMeStatic(string text)
+        {
+            StaticBar = text;
         }
     }
 }

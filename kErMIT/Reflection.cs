@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Sigil;
 
 namespace kErMIT
@@ -55,18 +56,6 @@ namespace kErMIT
             }
         }
 
-        public static Action GenerateMethodCall(this Type type, string name)
-        {
-            var methodName = type.Name.ToMethodName("GenerateMethodCall");
-            var emiter = Emit<Action>.NewDynamicMethod(methodName);
-
-            emiter.Call(type.GetMethod(name));
-            emiter.Return();
-
-            var del = emiter.CreateDelegate();
-            return del;
-        }
-
         private static void AlignParameterType(Type parameterType, Emit<Func<object[], object>> emiter)
         {
             if (parameterType.IsPrimitive)
@@ -77,6 +66,68 @@ namespace kErMIT
             {
                 emiter.CastClass(parameterType);
             }
+        }
+
+        /// <summary>
+        /// Generates a static method call. The method should
+        /// not have parameters and should be marked as 'void'.
+        /// </summary>
+        /// <param name="type">Type containing this method</param>
+        /// <param name="name">The name of the method</param>
+        /// <returns>A delegate which calls a method</returns>
+        public static Action<object[]> GenerateMethodCall(this Type type, string name)
+        {
+            return GenerateMethodCall(type, name, new Type[0]);
+        }
+
+        /// <summary>
+        /// Generates a static method call. The method 
+        /// should be marked as 'void'.
+        /// </summary>
+        /// <param name="type">Type containing this method</param>
+        /// <param name="name">The name of the method</param>
+        /// <param name="parameters">Types of the parameters</param>
+        /// <returns>A delegate which calls a method</returns>
+        public static Action<object[]> GenerateMethodCall(this Type type, string name, Type[] parameters)
+        {
+            var methodName = type.Name.ToMethodName("GenerateMethodCall");
+            var emiter = Emit<Action<object[]>>.NewDynamicMethod(methodName);
+
+            if (parameters.Length == 0)
+            {
+                emiter.Call(type.GetMethod(name, parameters));
+            }
+            else
+            {
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    using (var param = emiter.DeclareLocal(parameters[i], $"__parameter_{i}"))
+                    {
+                        emiter.LoadArgument(0);
+                        emiter.LoadConstant(i);
+                        emiter.LoadElement(typeof(object));
+
+                        if (parameters[i].IsPrimitive)
+                        {
+                            emiter.UnboxAny(parameters[i]);
+                        }
+                        else
+                        {
+                            emiter.CastClass(parameters[i]);
+                        }
+
+                        emiter.StoreLocal(param);
+                        emiter.LoadLocal(param);
+                    }
+                }
+              
+                emiter.Call(type.GetMethod(name, parameters));
+            }
+            
+            emiter.Return();
+
+            var del = emiter.CreateDelegate();
+            return del;
         }
     }
 }
