@@ -130,7 +130,7 @@ namespace kErMIT
 
         private static void AlignParameterType<T>(Type parameterType, Emit<T> emiter)
         {
-            if (parameterType.IsPrimitive)
+            if (parameterType.IsPrimitive || parameterType.IsValueType)
             {
                 emiter.UnboxAny(parameterType);
             }
