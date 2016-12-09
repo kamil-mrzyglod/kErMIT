@@ -47,6 +47,28 @@ namespace kErMIT.Test
 
             Assert.That(Foo.StaticBar, Is.EqualTo("Foo"));
         }
+
+        [Test]
+        public void ReflectionTest_WhenCallingAnInstanceMethodWithoutParametersAndVoidReturnType_ItIsCalledCorrectly()
+        {
+            var instance = new Foo();
+            var method = typeof(Foo).GenerateInstanceMethodCall("CallMe");
+
+            method(null, instance);
+
+            Assert.That(instance.InstanceBar, Is.EqualTo("CallMe"));
+        }
+
+        [Test]
+        public void ReflectionTest_WhenCallingAnInstanceMethodWithParametersAndVoidReturnType_ItIsCalledCorrectly()
+        {
+            var instance = new Foo();
+            var method = typeof(Foo).GenerateInstanceMethodCall("CallMe", new []{typeof(string)});
+
+            method(new []{"foo"}, instance);
+
+            Assert.That(instance.InstanceBar, Is.EqualTo("foo"));
+        }
     }
 
     internal class Foo
@@ -56,10 +78,11 @@ namespace kErMIT.Test
         public readonly string Bar;
         public readonly int Foobar;
 
+        public string InstanceBar;
+
         public Foo()
         {
             Bar = "Parameterless";
-            Foo.CallMeStatic();
         }
 
         public Foo(string bar)
@@ -78,9 +101,19 @@ namespace kErMIT.Test
             StaticBar = "CallMeStatic";
         }
 
+        public void CallMe()
+        {
+            InstanceBar = "CallMe";
+        }
+
         public static void CallMeStatic(string text)
         {
             StaticBar = text;
+        }
+
+        public void CallMe(string text)
+        {
+            InstanceBar = text;
         }
     }
 }

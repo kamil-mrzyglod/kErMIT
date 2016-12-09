@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Sigil;
 
 namespace kErMIT
@@ -68,6 +69,31 @@ namespace kErMIT
             var methodName = type.Name.ToMethodName("GenerateMethodCall");
             var emiter = Emit<Action<object[]>>.NewDynamicMethod(methodName);
 
+            if (parameters.Length != 0)
+            {
+                LoadParametersAsLocals(parameters, emiter);
+            }
+
+            emiter.Call(type.GetMethod(name, parameters));          
+            emiter.Return();
+
+            var del = emiter.CreateDelegate();
+            return del;
+        }
+
+        public static Action<object[], object> GenerateInstanceMethodCall(this Type type, string name)
+        {
+            return GenerateInstanceMethodCall(type, name, new Type[0]);
+        }
+
+        public static Action<object[], object> GenerateInstanceMethodCall(this Type type, string name, Type[] parameters)
+        {
+            var methodName = type.Name.ToMethodName("GenerateInstanceMethodCall");
+            var emiter = Emit<Action<object[], object>>.NewDynamicMethod(methodName);
+
+            emiter.LoadArgument(1);
+            emiter.CastClass(type);
+
             if (parameters.Length == 0)
             {
                 emiter.Call(type.GetMethod(name, parameters));
@@ -75,10 +101,9 @@ namespace kErMIT
             else
             {
                 LoadParametersAsLocals(parameters, emiter);
-
                 emiter.Call(type.GetMethod(name, parameters));
             }
-            
+    
             emiter.Return();
 
             var del = emiter.CreateDelegate();
