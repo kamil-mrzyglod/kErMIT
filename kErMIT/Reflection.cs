@@ -81,11 +81,26 @@ namespace kErMIT
             return del;
         }
 
+        /// <summary>
+        /// Generates a call to an instance method. Method
+        /// should be marked as void.
+        /// </summary>
+        /// <param name="type">Type containing this method</param>
+        /// <param name="name">The name of the method</param>
+        /// <returns>A delegate which calls an instance method</returns>
         public static Action<object[], object> GenerateInstanceMethodCall(this Type type, string name)
         {
             return GenerateInstanceMethodCall(type, name, new Type[0]);
         }
 
+        /// <summary>
+        /// Generates a call to an instance method. Method
+        /// should be marked as void and have at least 1 parameter.
+        /// </summary>
+        /// <param name="type">Type containing this method</param>
+        /// <param name="name">The name of the method</param>
+        /// <param name="parameters">Types of the parameter</param>
+        /// <returns>A delegate which calls an instance method</returns>
         public static Action<object[], object> GenerateInstanceMethodCall(this Type type, string name, Type[] parameters)
         {
             var methodName = type.Name.ToMethodName("GenerateInstanceMethodCall");
