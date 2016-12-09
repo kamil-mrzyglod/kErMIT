@@ -11,10 +11,12 @@ kErMIT is a simple tool, which allows you to take advantage of emitted code with
 You can use methods of kErMIT as extension methods for `Type`.
 
 Currently kErMIT covers following scenario:
-* `new T()` -> `typeof(T).GenerateConstructor()(null);`
-* `new T("param1", "param2")` -> `typeof(T).GenerateConstructor()(new []{"param1", "param2"});`
+* `new T()` -> `typeof(T).GenerateConstructor()(null)`
+* `new T("param1", "param2")` -> `typeof(T).GenerateConstructor()(new []{"param1", "param2"})`
 * `T.CallMeStatic()` -> `typeof(T).GenerateMethodCall("CallMeStatic")()`
 * `T.CallMeStatic("param1")` -> `typeof(T).GenerateMethodCall("CallMeStatic", new[]{typeof(string)})("param1")`
+* `new T().CallMe()` -> `typeof(T).GenerateInstanceMethodCall("CallMe")(null, new T())`
+* `new T().CallMe("param1")` -> `typeof(T).GenerateInstanceMethodCall("CallMe")(new []{"param1"}, new T())`
 
 ## Performance
 
@@ -23,19 +25,23 @@ You can run simple benchmarks from `kErMIT.Bench` project. Current results(Intel
 ```
 # Warming up...
 # Creating instances(default) using reflection.
-# Elapsed time: 77ms
+# Elapsed time: 78ms
 # Creating instances(default) using kErMIT.
 # Elapsed time: 10ms
 # Creating instances(1 param) using reflection.
-# Elapsed time: 917ms
+# Elapsed time: 924ms
 # Creating instances(1 param) using kErMIT.
-# Elapsed time: 18ms
+# Elapsed time: 17ms
 # Calling a static method(no params, void) using reflection.
-# Elapsed time: 157ms
+# Elapsed time: 161ms
 # Creating a static method(no params, void) using kErMIT.
-# Elapsed time: 6ms
+# Elapsed time: 7ms
 # Calling a static method(1 param, void) using reflection.
-# Elapsed time: 231ms
+# Elapsed time: 230ms
 # Creating a static method(1 param, void) using kErMIT.
 # Elapsed time: 14ms
+# Calling an instance method(no params, void) using reflection.
+# Elapsed time: 190ms
+# Creating an instance method(no params, void) using kErMIT.
+# Elapsed time: 7ms
 ```
